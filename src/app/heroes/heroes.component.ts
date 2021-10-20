@@ -1,6 +1,7 @@
 import { Component, OnChanges, OnInit } from '@angular/core';
 import { Hero } from '../hero';
-import { HEROES } from '../mock-heroes';
+import { HeroService } from '../hero.service';
+import { MessageService } from '../message.service';
 
 @Component({
   selector: 'app-heroes',
@@ -13,21 +14,33 @@ export class HeroesComponent implements OnInit, OnChanges {
     name: 'Windstorm'
   };
 
-  heroes = HEROES;
+  heroes: Hero[] = [];
   console = console;
 
-  selectedHero?: Hero; //de bien khong bi loi khi duoc goi luc k co du lieu
-  onSelect(hero: Hero): void {
-    this.selectedHero = hero;
-  }
-  
-  constructor() { }
+  selectedHero?: Hero; //de bien khong bi loi khi duoc goi luc k co du lieu  
+    
+  constructor(private heroService: HeroService, private messageService: MessageService) { }
 
   ngOnInit(): void {
+    console.log("ngOnInit is call");
+    this.getHeroes();
   }
 
   ngOnChanges(): void {
-    console.log(this.hero.name);
+    console.log("ngOnChanges is call");
+  }
+
+  onSelect(hero: Hero): void {
+    this.selectedHero = hero;
+    this.messageService.add('You are selecting hero id= ' + hero.id)
+  }
+
+  getHeroes(): void {
+    //this.heroes = this.heroService.getHeroes(); Yeu cau lay data tu service, 
+    //Truong hop nay se false khi o du an that, vi service se phai doi server tra ve data
+    //=> heroSevice phai luon la bat dong bo
+
+    this.heroService.getHeroes().subscribe(heroes => this.heroes = heroes)
   }
 
 }
